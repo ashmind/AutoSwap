@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1BAEDD
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoSwap.Autofac", "AutoSwap.Autofac\AutoSwap.Autofac.csproj", "{2B977CC4-23E9-4D9A-9035-A799A4724D99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{498BF834-A76A-44D2-A4D6-565D6236FFD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{498BF834-A76A-44D2-A4D6-565D6236FFD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{498BF834-A76A-44D2-A4D6-565D6236FFD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B977CC4-23E9-4D9A-9035-A799A4724D99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B977CC4-23E9-4D9A-9035-A799A4724D99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B977CC4-23E9-4D9A-9035-A799A4724D99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B977CC4-23E9-4D9A-9035-A799A4724D99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

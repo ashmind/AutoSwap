@@ -116,10 +116,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\AutofacConfig.cs" />
+    <Compile Include="App_Start\DependencyResolverConfig.cs" />
+    <Compile Include="Models\IVersionService.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\VersionService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -138,11 +141,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AutoSwap.Autofac\AutoSwap.Autofac.csproj">
+      <Project>{2B977CC4-23E9-4D9A-9035-A799A4724D99}</Project>
+      <Name>AutoSwap.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AutoSwap\AutoSwap.csproj">
+      <Project>{b34f151d-b77b-43aa-80a1-33c8af373b04}</Project>
+      <Name>AutoSwap</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

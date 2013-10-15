@@ -14,7 +14,7 @@ namespace AutoSwap.Tests.WebSite {
         protected void Application_Start() {
             AreaRegistration.RegisterAllAreas();
 
-            AutofacConfig.RegisterAll();
+            DependencyResolverConfig.RegisterAll();
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

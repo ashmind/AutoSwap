@@ -14,12 +14,20 @@ namespace AutoSwap {
 
         public void StartMonitoring(Type type) {
             var path = this.locator.FindSourcePath(type);
+            if (path == null)
+                throw new NotSupportedException("Could not find source path for type '" + type.AssemblyQualifiedName + "'.");
+
             var data = new AutoSwapMonitorData(type, new FileInfo(path));
             monitoring.Add(type, data);
         }
 
         public AutoSwapMonitorData GetMonitoringData(Type type) {
-            return monitoring[type];
+            AutoSwapMonitorData data;
+            var found = monitoring.TryGetValue(type, out data);
+            if (!found)
+                throw new NotSupportedException("Type '" + type.AssemblyQualifiedName + "' is not currently being monitored.");
+
+            return data;
         }
     }
 }

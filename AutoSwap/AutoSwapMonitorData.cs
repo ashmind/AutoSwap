@@ -15,7 +15,10 @@ namespace AutoSwap {
         public Type LastType { get; private set; }
 
         public bool NeedsUpdate {
-            get { return this.SourceFile.LastWriteTimeUtc > this.LastUpdated.UtcDateTime; }
+            get {
+                this.SourceFile.Refresh();
+                return this.SourceFile.LastWriteTimeUtc > this.LastUpdated.UtcDateTime;
+            }
         }
 
         public void UpdateType(Type newType) {
