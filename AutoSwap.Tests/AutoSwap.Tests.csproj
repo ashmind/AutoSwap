@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AshMind.Extensions">
+      <HintPath>..\#packages\AshMind.Extensions.1.1.5\lib\net45\AshMind.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,8 +50,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoSwapRecompilerTests.cs" />
+    <Compile Include="Helpers\TempPathHelper.cs" />
+    <Compile Include="Helpers\CompilationHelper.cs" />
+    <Compile Include="Helpers\XunitTestContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Poc.cs" />
+    <Compile Include="AutoSwapIntegrationTests.cs" />
+    <Compile Include="AutoSwapSourceLocatorTests.cs" />
     <Compile Include="TestInterfaces\IVersioned.cs" />
   </ItemGroup>
   <ItemGroup>
