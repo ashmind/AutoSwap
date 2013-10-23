@@ -1,40 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using AutoSwap.CastleProxy;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 
 namespace AutoSwap.Autofac {
     public class AutoSwapActivator : IInstanceActivator {
-        private readonly Type originalType;
-        private ReflectionActivator reflectionActivator;
+        private readonly IComponentRegistration registration;
+        private readonly ReflectionActivator originalActivator;
 
-        public AutoSwapActivator(ReflectionActivator reflectionActivator) {
-            this.reflectionActivator = reflectionActivator;
-            this.originalType = this.reflectionActivator.LimitType;
+        public AutoSwapActivator(IComponentRegistration registration, ReflectionActivator originalActivator) {
+            this.registration = registration;
+            this.originalActivator = originalActivator;
         }
 
         public object ActivateInstance(IComponentContext context, IEnumerable<Parameter> parameters) {
-            var typeResolver = context.Resolve<AutoSwapTypeResolver>();
-            var currentType = typeResolver.Resolve(this.originalType);
-            if (currentType != this.LimitType) {
-                this.reflectionActivator = new ReflectionActivator(
-                    currentType,
-                    this.reflectionActivator.ConstructorFinder,
-                    this.reflectionActivator.ConstructorSelector,
-                    new Parameter[0], new Parameter[0]
-                );
-            }
+            var monitor = context.Resolve<AutoSwapMonitor>();
+            if (!monitor.IsMonitoring(this.originalActivator.LimitType))
+                return this.originalActivator.ActivateInstance(context, parameters);
 
-            return this.reflectionActivator.ActivateInstance(context, parameters);
+            var proxyFactory = context.Resolve<IAutoSwapProxyFactory>();
+            var serviceTypes = this.registration.Services.OfType<TypedService>().Select(s => s.ServiceType).ToArray();
+
+            return proxyFactory.CreateProxy(
+                serviceTypes,
+                this.originalActivator.LimitType,
+                type => ActivateInstanceInProxy(type, context, parameters)
+            );
+        }
+
+        private object ActivateInstanceInProxy(Type targetType, IComponentContext context, IEnumerable<Parameter> parameters) {
+            using (var reflectionActivator = CreateReflectionActivator(targetType)) {
+                return reflectionActivator.ActivateInstance(context, parameters);
+            }
+        }
+
+        private ReflectionActivator CreateReflectionActivator(Type targetType) {
+            return new ReflectionActivator(
+                targetType,
+                this.originalActivator.ConstructorFinder,
+                this.originalActivator.ConstructorSelector,
+                Enumerable.Empty<Parameter>(),
+                Enumerable.Empty<Parameter>()
+            );
         }
 
         public void Dispose() {
-            this.reflectionActivator.Dispose();
+            this.originalActivator.Dispose();
         }
 
         public Type LimitType {
-            get { return this.reflectionActivator.LimitType; }
+            get { return this.originalActivator.LimitType; }
         }
     }
 }

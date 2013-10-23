@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 namespace AutoSwap.Tests.Helpers {
     public static class CompilationHelper {
         public static Type CompileAndLoadType(string sourcePath, string source, string typeName = null) {
+            File.WriteAllText(sourcePath, source);
             var dllPath = Path.ChangeExtension(sourcePath, "dll");
             var cscPath = Path.Combine(RuntimeEnvironment.GetRuntimeDirectory(), "csc.exe");
             var cscArguments = string.Format(

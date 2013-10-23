@@ -12,13 +12,18 @@ namespace AutoSwap {
             this.locator = locator;
         }
 
-        public void StartMonitoring(Type type) {
+        public bool StartMonitoring(Type type) {
             var path = this.locator.FindSourcePath(type);
             if (path == null)
-                throw new NotSupportedException("Could not find source path for type '" + type.AssemblyQualifiedName + "'.");
+                return false;
 
             var data = new AutoSwapMonitorData(type, new FileInfo(path));
             monitoring.Add(type, data);
+            return true;
+        }
+
+        public bool IsMonitoring(Type type) {
+            return monitoring.ContainsKey(type);
         }
 
         public AutoSwapMonitorData GetMonitoringData(Type type) {

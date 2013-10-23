@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
+using AutoSwap.CastleProxy;
 using Autofac;
 using Autofac.Core;
 using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
-using Module = Autofac.Module;
+using Castle.DynamicProxy;
 
 namespace AutoSwap.Autofac {
     public class AutoSwapModule : Module {
@@ -13,6 +14,18 @@ namespace AutoSwap.Autofac {
 
         protected override void Load(ContainerBuilder builder) {
             base.Load(builder);
+
+            builder.RegisterType<ProxyGenerator>()
+                   .AsSelf();
+
+            builder.RegisterType<AutoSwapCastleProxyFactory>()
+                   .As<IAutoSwapProxyFactory>()
+                   .SingleInstance();
+
+            builder.RegisterType<AutoSwapCastleInterceptor>()
+                   .As<IInterceptor>()
+                   .InstancePerDependency();
+
             builder.RegisterType<AutoSwapSourceLocator>().SingleInstance();
             builder.RegisterType<AutoSwapMonitor>().SingleInstance();
             builder.RegisterType<AutoSwapRecompiler>().SingleInstance();
@@ -33,8 +46,11 @@ namespace AutoSwap.Autofac {
             if (targetType.Assembly == typeof(AutoSwapMonitor).Assembly || targetType.Assembly == typeof(AutoSwapStartable).Assembly)
                 return;
 
+            if (registration.Services.Select(s => s as TypedService).Any(s => s == null || !s.ServiceType.IsInterface))
+                return;
+
             typesToMonitor.Add(reflectionActivator.LimitType);
-            ((ComponentRegistration)registration).Activator = new AutoSwapActivator(reflectionActivator);
+            ((ComponentRegistration)registration).Activator = new AutoSwapActivator(registration, reflectionActivator);
         }
     }
 }

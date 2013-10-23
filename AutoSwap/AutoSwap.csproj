@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Argument">
+      <HintPath>..\#packages\Argument.0.9.6\lib\net45\Argument.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core">
       <HintPath>..\#packages\Castle.Core.3.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
@@ -67,13 +70,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoSwapInterceptorArguments.cs" />
+    <Compile Include="CastleProxy\AutoSwapCastleProxyFactory.cs" />
     <Compile Include="AutoSwapRecompiler.cs" />
-    <Compile Include="AutoSwapInterceptor.cs" />
+    <Compile Include="CastleProxy\AutoSwapCastleInterceptor.cs" />
     <Compile Include="AutoSwapMonitor.cs" />
     <Compile Include="AutoSwapMonitorData.cs" />
     <Compile Include="AutoSwapProxyGenerator.cs" />
     <Compile Include="AutoSwapTypeResolver.cs" />
     <Compile Include="AutoSwapSourceLocator.cs" />
+    <Compile Include="IAutoSwapProxyFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
