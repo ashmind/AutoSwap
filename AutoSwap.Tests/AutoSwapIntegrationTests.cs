@@ -12,13 +12,14 @@ namespace AutoSwap.Tests {
     public class AutoSwapIntegrationTests {
         [Fact]
         public void Resolving_ReturnsNewType_IfSourceHasChanged() {
-            var sourcePath = TempPathHelper.GetTempSourcePath();
-            var originalType = CompilationHelper.CompileAndLoadType(sourcePath, CreateSourceForClassWithVersion(1));
+            var helper = AutoSwapTestHelper.ForClassWithVersion(1);
+            var originalType = helper.CompileAndLoadType();
+
             var monitor = new AutoSwapMonitor(new AutoSwapSourceLocator());
             monitor.StartMonitoring(originalType);
 
             var resolver = new AutoSwapTypeResolver(monitor, new AutoSwapRecompiler());
-            File.WriteAllText(sourcePath, CreateSourceForClassWithVersion(2));
+            helper.WriteNewVersion(2);
             var resultType = resolver.Resolve(originalType);
             var instance = (IVersioned)Activator.CreateInstance(resultType);
 
@@ -27,8 +28,9 @@ namespace AutoSwap.Tests {
 
         [Fact]
         public void Proxy_CallsNewType_IfSourceHasChanged() {
-            var sourcePath = TempPathHelper.GetTempSourcePath();
-            var originalType = CompilationHelper.CompileAndLoadType(sourcePath, CreateSourceForClassWithVersion(1));
+            var helper = AutoSwapTestHelper.ForClassWithVersion(1);
+            var originalType = helper.CompileAndLoadType();
+
             var monitor = new AutoSwapMonitor(new AutoSwapSourceLocator());
             monitor.StartMonitoring(originalType);
 
@@ -39,13 +41,9 @@ namespace AutoSwap.Tests {
                 a => new AutoSwapCastleInterceptor(a, typeResolver)
             );
             var proxy = (IVersioned)proxyFactory.CreateProxy(new[] { typeof(IVersioned) }, originalType, Activator.CreateInstance);
-            File.WriteAllText(sourcePath, CreateSourceForClassWithVersion(2));
+            helper.WriteNewVersion(2);
 
             Assert.Equal(2, proxy.Version);
-        }
-
-        private string CreateSourceForClassWithVersion(int version) {
-            return "public class X : " + typeof(IVersioned).FullName + " { public int Version { get { return " + version + "; } } }";
         }
     }
 }

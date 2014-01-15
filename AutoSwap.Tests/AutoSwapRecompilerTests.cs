@@ -10,13 +10,12 @@ namespace AutoSwap.Tests {
     public class AutoSwapRecompilerTests {
         [Fact]
         public void Recompile_ReturnsCorrectType() {
-            var sourcePath = TempPathHelper.GetTempSourcePath();
+            var helper = AutoSwapTestHelper.ForClassWithVersion(1);
+            var originalType = helper.CompileAndLoadType();
 
-            Func<int, string> makeSourceForVersion = version => "public class X : " + typeof(IVersioned).FullName + " { public int Version { get { return " + version + "; } } }";
-            var originalType = CompilationHelper.CompileAndLoadType(sourcePath, makeSourceForVersion(1));
-            File.WriteAllText(sourcePath, makeSourceForVersion(2));
+            helper.WriteNewVersion(2);
 
-            var newType = new AutoSwapRecompiler().Recompile(new FileInfo(sourcePath), originalType);
+            var newType = new AutoSwapRecompiler().Recompile(helper.SouceFile, originalType);
             var instance = (IVersioned)Activator.CreateInstance(newType);
 
             Assert.Equal(2, instance.Version);
@@ -24,15 +23,14 @@ namespace AutoSwap.Tests {
 
         [Fact]
         public void Recompile_Works_IfTypesFromOriginalAssemblyAreReferenced() {
-            var sourcePath = TempPathHelper.GetTempSourcePath();
-            var originalType = CompilationHelper.CompileAndLoadType(
-                sourcePath,
-                @"public class Y {}
-                  public class X { public Y M() { return new Y(); } }",
-                typeName: "X"
-            );
+            var helper = new AutoSwapTestHelper(@"
+                public class Y {}
+                public class X { public Y M() { return new Y(); } }
+            ");
 
-            var newType = new AutoSwapRecompiler().Recompile(new FileInfo(sourcePath), originalType);
+            var originalType = helper.CompileAndLoadType("X");
+
+            var newType = new AutoSwapRecompiler().Recompile(helper.SouceFile, originalType);
 
             Assert.NotNull(newType);
         }
